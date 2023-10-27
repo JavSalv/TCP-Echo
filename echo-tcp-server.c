@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     if (argc == 3)
     {
         ASSERT((strcmp(argv[1], "-p") == 0), "Uso: %s [-p puerto_servidor]\n", argv[0]);
-        sscanf(argv[1], "%i", &aux);
+        sscanf(argv[2], "%i", &aux);
         ASSERT((aux > 0 && aux <= 65535), "Error: puerto_servidor no es un puerto válido\n");
         puerto = htons(aux);
     }
@@ -71,11 +71,8 @@ int main(int argc, char **argv)
     while(1){
         //Aceptamos la conexión.
         clientfd = accept(sockfd,(struct sockaddr*)&client_addr,&client_legth);
-        if(clientfd == -1 && errno ==  EBADF){
-            exit(EXIT_FAILURE);
-            //Esto es necesario para que no se imprima un mensaje de error al terminar el programa con ^C.
-        }
-        ASSERT(clientfd != -1, "Eror creando conexión con cliente %s\n",strerror(errno));
+
+        ASSERT(clientfd != -1 && errno != EBADF, "Eror creando conexión con cliente %s\n",strerror(errno));
 
         childpid = fork();
         ASSERT(childpid != -1, "Error creando proceso hijo %s\n", strerror(errno));
@@ -106,7 +103,7 @@ void child_function(int clientfd,struct sockaddr_in client_addr){
     ASSERT(msg != NULL,"Error malloc\n");
 
     aux = recv(clientfd,msg,MAX_LENGHT+1,0);
-    ASSERT(aux != -1, "Error recibiendo mensaje o timeout alcanzado %s\n",strerror(errno));
+    ASSERT(aux != -1, "Error recibiendo mensaje%s\n",strerror(errno));
 
     printf("Recibida string: %s; desde %s\n",msg,inet_ntoa(client_addr.sin_addr));
     process_string(msg);
@@ -115,7 +112,6 @@ void child_function(int clientfd,struct sockaddr_in client_addr){
     ASSERT(aux != -1, "Error enviando el mensaje %s\n",strerror(errno));
 
     free(msg);
-
 }
 
 //Cambia las mayúsculas por minúsculas y viceversa. Ignora el resto de caracteres.

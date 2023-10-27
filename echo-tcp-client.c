@@ -1,4 +1,4 @@
-// Practica Tema 5: Salvador Peñacoba, Javier
+// Practica Tema 6: Salvador Peñacoba, Javier
 
 #include <stdio.h>
 #include <string.h>
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     server_addr.sin_addr = addr;
     server_addr.sin_family = AF_INET;
 
-    // Creamos socket UDP
+    // Creamos socket TCP
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     ASSERT(sockfd != -1, "Error creando socket: %s\n", strerror(errno));
 
