@@ -71,7 +71,6 @@ int main(int argc, char **argv)
     while(1){
         //Aceptamos la conexión.
         clientfd = accept(sockfd,(struct sockaddr*)&client_addr,&client_legth);
-
         ASSERT(clientfd != -1 && errno != EBADF, "Eror creando conexión con cliente %s\n",strerror(errno));
 
         childpid = fork();
@@ -94,6 +93,7 @@ int main(int argc, char **argv)
 void signal_handler(int signum){
     shutdown(sockfd, SHUT_RDWR);
     close(sockfd);
+    exit(0);
 }
 
 //Codigo que ejecuta cada hijo que atiende una petición.
